@@ -2,23 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-int verificar_palindromo(char *string_frase, int inicio, int fim, float ponto_medio)
+int verificar_palindromo(char *string_frase, char *inverso, int i)
 {
-    if (inicio >= ponto_medio)
-        return 1;
-    else if (string_frase[inicio] != string_frase[fim])
+    if (string_frase[i] != inverso[i])
         return 0;
+    else if (i == strlen(string_frase) - 1)
+        return 1;
     else
-        return verificar_palindromo(string_frase, inicio + 1, fim - 1, ponto_medio);
+        return verificar_palindromo(string_frase, inverso, i + 1);
 }
 
 int main()
-{   char frase[100];
+{
+    char frase[100];
     char string_frase[100];
 
-    // Recebendo a frase e colocando tudo minusculo 
+    // Recebendo a frase e colocando tudo minusculo
     printf("\nDigite a palavra ou frase: ");
+    fflush(stdin);
     fgets(frase, 100, stdin);
+
     frase[strcspn(frase, "\n")] = '\0';
     for (int i = 0; i < strlen(frase); i++)
         frase[i] = tolower(frase[i]);
@@ -32,11 +35,27 @@ int main()
             k++;
         }
     }
+
+    // Bug do vsCode
+    string_frase[strcspn(string_frase, "'")] = '\0';
+
     // Chamando Função
-    int tamanho = strlen(string_frase) - 1;
-    int resultado = verificar_palindromo(string_frase, 0, tamanho, tamanho / 2);
+    char *inversa = (char *)malloc(strlen(string_frase) * sizeof(int));
+    strcpy(inversa, string_frase);
+    strrev(inversa);
+
+    /* Outra alternativa para inverter a frase
+    
+    int j=(strcspn(string_frase,"\0"))-1;
+        for(int i =0;i<=j;i++)
+            inversa[i]=string_frase[j-i];*/
+
+
+    int resultado = verificar_palindromo(string_frase, inversa, 0);
     if (resultado == 1)
         printf("\nA frase e palindromo\n\n");
     else
         printf("\nA frase nao e palindromo\n\n");
+
+    return 0;
 }
