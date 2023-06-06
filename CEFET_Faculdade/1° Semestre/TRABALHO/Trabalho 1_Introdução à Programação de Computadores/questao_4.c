@@ -266,7 +266,8 @@ int main()
             printf("\nO roteiro da sequencia é possível\n");
         else
             printf("\nO roteiro não é possível\n");
-        break;
+        break; 
+        
     }
     default:
         exit(0);
