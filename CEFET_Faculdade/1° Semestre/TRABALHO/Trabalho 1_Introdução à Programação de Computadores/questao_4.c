@@ -34,7 +34,7 @@ int **funcao_matriz(int n) // Criar matriz, Receber os valores dos elementos e I
     return matriz;
 }
 
-int *quantas_estradas_e_saidas(int **matriz, int linha, int coluna, int n) // Dado k, determinar quantas estradas saem e quantas chegam à cidade k.
+int *quantas_estradas_e_saidas(int **matriz, int linha, int coluna, int n, int **recebe) // Dado k, determinar quantas estradas saem e quantas chegam à cidade k.
 {
     int chegam = 0, saem = 0;
     if (coluna == 1) // primeira coluna
@@ -112,10 +112,15 @@ int *quantas_estradas_e_saidas(int **matriz, int linha, int coluna, int n) // Da
             saem = 2;
         }
     }
-    int *recebe = (int *)malloc(sizeof(int) * 2);
-    recebe[0] = chegam;
-    recebe[1] = saem;
-    return recebe;
+
+    printf("\nDa cidade %d, existe(m) %d entrada(s) e %d saida(s)\n\n", matriz[linha-1][coluna-1], chegam, saem);
+
+
+    int *recebe_re = (int *)malloc(sizeof(int) * 2);
+    recebe_re[0] = chegam;
+    recebe_re[1] = saem;
+    *recebe = recebe_re;
+    return recebe_re;
 }
 
 void maior_numero_estradas(int **matriz, int n) // A qual das cidades chega o maior número de estradas?
@@ -128,7 +133,7 @@ void maior_numero_estradas(int **matriz, int n) // A qual das cidades chega o ma
     {
         for (int j = 0; j < n; j++)
         {
-            aux = quantas_estradas_e_saidas(matriz, i + 1, j + 1, n);
+            quantas_estradas_e_saidas(matriz, i + 1, j + 1, n, &aux);
             if (maior < aux[0])
             {
                 maior = aux[0];
@@ -142,7 +147,7 @@ void maior_numero_estradas(int **matriz, int n) // A qual das cidades chega o ma
     {
         for (int j = 0; j < n; j++)
         {
-            aux = quantas_estradas_e_saidas(matriz, i + 1, j + 1, n);
+            quantas_estradas_e_saidas(matriz, i + 1, j + 1, n,&aux);
             if (maior == aux[0])
             {
               printf("Cidade[%d][%d]: %d\n",linha_maior,coluna_maior, maior);
@@ -152,6 +157,14 @@ void maior_numero_estradas(int **matriz, int n) // A qual das cidades chega o ma
     printf("\n\n");
 
 }
+void mao_dupla(int **matriz, int n, int linha, int coluna) 
+{
+ 
+
+}
+
+
+
 int main()
 {
     int n, questao;
@@ -169,16 +182,16 @@ int main()
     case 1:
     {
         int i, j, *recebe;
-        //recebe = (int *)malloc(sizeof(int) * 2);
+        recebe = (int *)malloc(sizeof(int) * 2);
         printf("\nInforme qual cidade:\n");
         printf("Posicao da linha: ");
         scanf("%d", &i);
         printf("Posicao da coluna: ");
         scanf("%d", &j);
 
-        recebe = quantas_estradas_e_saidas(matriz, i, j, n);
+        quantas_estradas_e_saidas(matriz, i, j, n, &recebe);
 
-        printf("\nDa cidade %d, existe(m) %d entrada(s) e %d saida(s)\n", matriz[i][j], recebe[0], recebe[1]);
+        printf("\nDa cidade %d, existe(m) %d entrada(s) e %d saida(s)\n\n", matriz[i-1][j-1], recebe[0], recebe[1]);
         break;
     }
 
@@ -189,6 +202,17 @@ int main()
     }
     case 3:
     {
+        int i, j, *recebe;
+        recebe = (int *)malloc(sizeof(int) * 2);
+        printf("\nInforme qual cidade:\n");
+        printf("Posicao da linha: ");
+        scanf("%d", &i);
+        printf("Posicao da coluna: ");
+        scanf("%d", &j);
+
+        //mao_dupla(matriz, n);
+
+        break;
     }
     case 4:
     {
