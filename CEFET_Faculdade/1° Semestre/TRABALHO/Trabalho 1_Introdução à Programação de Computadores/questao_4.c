@@ -112,7 +112,9 @@ int *quantas_estradas_e_saidas(int **matriz, int linha, int coluna, int n) // Da
             saem = 2;
         }
     }
-    int recebe[2]={chegam,saem};
+    int *recebe=(int *)malloc(sizeof(int)*2);
+    recebe[0]=chegam;
+    recebe[1]=saem;
     return recebe;
 }
 
@@ -136,6 +138,7 @@ int main()
     case 1:
     {
         int i, j, *recebe;
+        recebe=(int *)malloc(sizeof(int)*2);
         printf("\nInforme qual cidade:\n");
         printf("Posicao da linha: ");
         scanf("%d", &i);
