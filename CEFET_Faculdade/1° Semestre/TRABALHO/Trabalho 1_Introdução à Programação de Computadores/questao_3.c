@@ -27,6 +27,8 @@ int main()
         frase[i] = tolower(frase[i]);
 
     // Tirando os espaços da frase
+
+    
     for (int i = 0, k = 0; i < strlen(frase); i++)
     {
         if (frase[i] != ' ')

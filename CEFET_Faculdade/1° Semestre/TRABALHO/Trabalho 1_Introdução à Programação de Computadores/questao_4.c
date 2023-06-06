@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+int **funcao_matriz(int n) // Criar matriz, Receber os valores dos elementos e Imprimir a matriz
+{
+    int **matriz = (int **)malloc(sizeof(int) * n);
+    for (int i = 0; i < n; i++)
+        matriz[i] = (int *)malloc(sizeof(int) * n);
+
+    printf("\nInforme os valores os elementos 1 ou 0 (conforme exista ou não estrada direta)\n\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (i == j)
+                matriz[i][j] = 1;
+            else
+            {
+                printf("Posicao [%d][%d]: ", i + 1, j + 1);
+                scanf("%d", &matriz[i][j]);
+            }
+        }
+        printf("\n");
+    }
+    printf("\nTabela:\n\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+            printf("%d\t", matriz[i][j]);
+        printf("\n");
+    }
+
+    return matriz;
+}
+
+int *quantas_estradas_e_saidas(int **matriz, int linha, int coluna, int n) // Dado k, determinar quantas estradas saem e quantas chegam à cidade k.
+{
+    int chegam = 0, saem = 0;
+    if (coluna  == 1)// primeira coluna
+    {
+        if (matriz[linha - 1][coluna - 1] == 0)
+        {
+            chegam = 1;
+            saem = 1;
+        }
+        else
+        {
+            if (matriz[linha][coluna] == 1)
+            {
+                chegam = 0;
+                saem = 1;
+            }
+            else if (matriz[linha][coluna] == 0)
+            {
+                chegam = 1;
+                saem = 1;
+            }
+        }
+    }
+
+    if (coluna == n)// ultima coluna
+    {
+        if (matriz[linha - 1][coluna - 1] == 0)
+        {
+            chegam = 2;
+            saem = 2;
+        }
+        else
+        {
+            if (matriz[linha-2][coluna-2] == 1)
+            {
+                chegam = 1;
+                saem = 0;
+            }
+            else if (matriz[linha-2][coluna-2] == 0)
+            {
+                chegam = 1;
+                saem = 1;
+            }
+        }
+    }
+
+    else// colunas restante
+    {
+        if (matriz[linha - 1][coluna - 1] == 1)
+        {
+            if (matriz[linha - 2][coluna - 2] == 0 && matriz[linha][coluna] == 0)
+            {
+                chegam = 2;
+                saem = 2;
+            }
+            else if (matriz[linha - 2][coluna - 2] == 0 && matriz[linha][coluna] == 1)
+            {
+                chegam = 1;
+                saem = 2;
+            }
+            else if (matriz[linha - 2][coluna - 2] == 1 && matriz[linha][coluna] == 0)
+            {
+                chegam = 3;
+                saem = 2;
+            }
+            else if (matriz[linha - 2][coluna - 2] == 1 && matriz[linha][coluna] == 1)
+            {
+                chegam = 1;
+                saem = 1;
+            }
+        }
+        else
+        {
+            chegam = 2;
+            saem = 2;
+        }
+    }
+    int recebe[2]={chegam,saem};
+    return recebe;
+}
+
+void questao_2(int **matriz, int n) // A qual das cidades chega o maior número de estradas?
+{
+}
+int main()
+{
+    int n, questao;
+    int **matriz;
+    printf("Digite o tamanho da ordem da Matriz: ");
+    scanf("%i", &n);
+
+    // Criar matriz, Receber os valores dos elementos e Imprimir a matriz
+    matriz = funcao_matriz(n);
+
+    printf("Escolhe uma questao de 1 a 6: ");
+    scanf("%i", &questao);
+    switch (questao)
+    {
+    case 1:
+    {
+        int i, j, *recebe;
+        printf("\nInforme qual cidade:\n");
+        printf("Posicao da linha: ");
+        scanf("%d", &i);
+        printf("Posicao da coluna: ");
+        scanf("%d", &j);
+
+        recebe = quantas_estradas_e_saidas(matriz, i, j, n);
+
+        printf("\nDa cidade %d, existe(m) %d entrada(s) e %d saida(s)\n", matriz[i][j], recebe[0],recebe[1]);
+        break;
+    }
+
+    case 2:
+    {
+        questao_2(matriz, n);
+        break;
+    }
+    case 3:
+    {
+    }
+    case 4:
+    {
+    }
+    case 5:
+    {
+    }
+    case 6:
+    {
+    }
+    default:
+        exit(0);
+        break;
+    }
+}
