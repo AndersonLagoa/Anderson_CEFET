@@ -121,6 +121,77 @@ void saidas_diretas_para_k(int **matriz, int n, int k)
     printf("\b\b.");
 }
 
+void relacao_entradas_e_saidas(int **matriz, int n)
+{
+    int isolado;
+    int saida;
+    int entrada;
+
+    for (int i = 0; i < n; i++)
+    {
+        isolado = 0;
+        saida = 0;
+        entrada = 0;
+        int cost = 0;
+        int *cidades_entrada = (int *)malloc(sizeof(int) * n);
+        int *cidades_saida = (int *)malloc(sizeof(int) * n);
+        for (int j = 0; j < n; j++)
+        {
+            if (i != j)
+            {
+                if (matriz[j][i] == 1 || matriz[i][j] == 1) // Verificar se as cidades são isoladas
+                    isolado++;
+                if (matriz[j][i] == 1 && matriz[i][j] == 0) // Verificar se as cidades tem saida, mas sem entrada
+                {
+                    cidades_saida[cost] = j;
+                    cost++;
+                    saida++;
+                }
+                if (matriz[j][i] == 0 && matriz[i][j] == 1) // Verificar se as cidades tem entrada, mas não tem saida
+                {
+                    cidades_entrada[cost] = j;
+                    cost++;
+                    entrada++;
+                }
+            }
+        }
+        printf("\n");
+        if (cidades_entrada != 0 && cidades_saida != 0 && isolado != 0)
+            printf("A cidade %d tem pelo menos uma entra e saida!!\n", i + 1);
+        else if (cidades_entrada == 0 && cidades_saida == 0 && isolado == 0)
+            printf("A cidade %d é isolada!!\n\n", i + 1);
+        else if (cidades_entrada == 0 && cidades_saida != 0 && isolado == 0)
+        {
+            printf("A cidade %d tem somente saidas, pelas cidades: ", i + 1);
+            for (int m = 0; m < saida; m++)
+                printf("%d ", cidades_entrada[m]);
+        }
+
+        else if (cidades_entrada == 0 && cidades_saida != 0 && isolado == 0)
+        {
+            printf("A cidade %d tem somente entradas, pelas cidades: ", i + 1);
+            for (int m = 0; m < entrada; m++)
+                printf("%d ", cidades_entrada[m]);
+        }
+        printf("\n");
+    }
+}
+
+int roteiro(int **matriz, int *vetor, int n)
+{
+    int cost = 0;
+
+    for (int i = 0; i < 5; i++)
+    {
+        if (matriz[vetor[i]][vetor[i + 1]] == 1)
+            cost = 1;
+        else if (matriz[vetor[i]][vetor[i + 1]] == 0)
+            return 0;
+    }
+
+    return cost;
+}
+
 int main()
 {
     int n, questao;
@@ -151,7 +222,7 @@ int main()
     case 2:
     {
         maior_numero_estradas(matriz, n);
-        
+
         break;
     }
     case 3:
@@ -174,9 +245,28 @@ int main()
     }
     case 5:
     {
+        relacao_entradas_e_saidas(matriz, n);
+
+        break;
     }
     case 6:
     {
+        int vetor[5];
+        printf("Digite 5 numeros da sequencia (0 - %d):\n", n - 1);
+        for (int i = 0; i < 5; i++)
+        {
+            scanf("%d", &vetor[i]);
+            if (!(vetor[i] >= 0 && vetor[i] < n))
+            {
+                printf("\nCidade não existe!!");
+                return 0;
+            }
+        }
+        if (roteiro(matriz, vetor, n) == 1)
+            printf("\nO roteiro da sequencia é possível\n");
+        else
+            printf("\nO roteiro não é possível\n");
+        break;
     }
     default:
         exit(0);
