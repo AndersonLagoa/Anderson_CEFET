@@ -1,3 +1,4 @@
+#include "cadastro.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,5 +13,34 @@ int main(){
     printf("\n\nEscolhe uma opção: ");
     scanf("%d",&menu);
    } while (menu<1 || menu>5);
-   
+   switch(menu)
+   {
+      case 1:
+      {
+         novo_cadastro(0);
+         break;
+      }
+      case 2:
+      {  
+         //exibir_cadastro();
+         break;
+      }
+      case 3:
+      {
+         //excluir_cadastro();
+         break;
+      }
+      case 4:
+      {
+        // alterar_cadastro();
+         break;
+      }
+      case 5:
+      {
+         // sair_cadastro();
+         break;
+      }
+
+   }
+    
 }
