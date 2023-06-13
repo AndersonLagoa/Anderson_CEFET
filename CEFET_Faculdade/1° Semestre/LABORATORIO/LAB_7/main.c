@@ -31,7 +31,7 @@ int main()
          excluir_cadastro(pessoa,quantidade_pessoas);
          break;
       case 4:
-         alterar_cadastro(pessoa);
+         alterar_cadastro(pessoa,quantidade_pessoas);
          break;
       case 5:
          salvar_cadastro(pessoa);

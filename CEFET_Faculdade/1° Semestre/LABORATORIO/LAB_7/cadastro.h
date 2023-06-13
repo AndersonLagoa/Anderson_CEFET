@@ -11,10 +11,10 @@ typedef struct cdt {
 } Cadastro;
 
 int carregar_cadastro(Cadastro *pessoas);
-void novo_cadastro(Cadastro *pessoas);
-void exibir_cadastro(Cadastro *pessoas);
-void excluir_cadastro(Cadastro *pessoas);
-void alterar_cadastro(Cadastro *pessoas);
+void novo_cadastro(Cadastro *pessoas, int *quantidade);
+void exibir_cadastro(Cadastro *pessoas, int *quantidade);
+void excluir_cadastro(Cadastro *pessoas, int *quantidade);
+void alterar_cadastro(Cadastro *pessoas, int *quantidade);
 void salvar_cadastro(Cadastro *pessoas);
 
 
