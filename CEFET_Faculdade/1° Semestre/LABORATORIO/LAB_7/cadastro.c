@@ -4,7 +4,6 @@
 
 int carregar_cadastro(Cadastro *pessoa)
 {
-
   FILE *arquivo = fopen("lista_cadstro.dat", "rb");
   if (arquivo == NULL)
   {
