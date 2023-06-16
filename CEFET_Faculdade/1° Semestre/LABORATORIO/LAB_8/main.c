@@ -26,24 +26,28 @@ int *ler_numeros(char *nome, int tam)
     return numeros;
 }
 
-void operacao(int *numeros)
+void operacao(int *numeros, int quantidade)
 {
     // Leia os números do arquivo binário e calcule a soma, a média e a quantidade deles
-    int soma = 0, media, quantidade = sizeof(numeros) + 1;
+    float soma = 0;
+    float media;
     for (int i = 0; i < quantidade; i++)
         soma += numeros[i];
     media = soma / quantidade;
 
-    int text_resultado_write[]= {soma, media, quantidade};
-    int text_resultado_read[3];
+    float text_resultado_write[] ={{soma},{media},{quantidade}} ;
+    float text_resultado_read[3];
 
-    printf("\n\n%d\t%d\n\n", soma, media);// ate aqui esta funcionando
+   for (int i = 0; i < quantidade; i++)
+       printf("%d ",numeros[i]);
+    printf("\n\n%f\t%f\n\n", soma, media);// ate aqui esta funcionando
 
     FILE *arquivo = fopen("resultadoTotal.bin", "rb");
+    
     if (arquivo == NULL)
     {
         fclose(arquivo);
-
+        printf("\n\ncerto\n\n");
         arquivo = fopen("resultadoTotal.bin", "wb");
         fwrite(text_resultado_write, sizeof(int), 3, arquivo);
         fclose(arquivo);
@@ -98,5 +102,5 @@ int main()
 
     cpy_numeros = ler_numeros(nome, tam);
 
-    operacao(cpy_numeros);
+    operacao(cpy_numeros,tam);
 }
