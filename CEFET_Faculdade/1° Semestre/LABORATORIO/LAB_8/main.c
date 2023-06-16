@@ -33,31 +33,31 @@ void operacao(int *numeros, int quantidade)
     float media;
     for (int i = 0; i < quantidade; i++)
         soma += numeros[i];
-    media = soma / quantidade;
 
-    float text_resultado_write[] ={{soma},{media},{quantidade}} ;
+    media = soma / (quantidade*1.00);
+    
+    printf("%d\n\n\n\n\n",quantidade);
+    float text_resultado_write[3];
+    text_resultado_write[0] = soma;
+    text_resultado_write[1] = media;
+    text_resultado_write[2] = quantidade;
     float text_resultado_read[3];
 
    for (int i = 0; i < quantidade; i++)
        printf("%d ",numeros[i]);
-    printf("\n\n%f\t%f\n\n", soma, media);// ate aqui esta funcionando
+    printf("\n\n%f\t%f\n\n", text_resultado_write[0], media, text_resultado_write[2]);// ate aqui esta funcionando
 
-    FILE *arquivo = fopen("resultadoTotal.bin", "rb");
-    
-    if (arquivo == NULL)
+    FILE *arquivo;
+    if (fopen("resultadoTotal.bin", "rb") == NULL)
     {
-        fclose(arquivo);
-        printf("\n\ncerto\n\n");
         arquivo = fopen("resultadoTotal.bin", "wb");
-        fwrite(text_resultado_write, sizeof(int), 3, arquivo);
+        fwrite(text_resultado_write, sizeof(float), 3, arquivo);
         fclose(arquivo);
     }
     else
     {
-        fclose(arquivo);
-
         arquivo = fopen("resultadoTotal.bin", "ab");
-        fwrite(text_resultado_write, sizeof(int), 3, arquivo);
+        fwrite(text_resultado_write, sizeof(float), 3, arquivo);
         fclose(arquivo);
     }
 
@@ -67,10 +67,10 @@ void operacao(int *numeros, int quantidade)
     {
         while (1)
         {
-            fread(text_resultado_read, sizeof(int), 3, arquivo);
+            fread(text_resultado_read, sizeof(float), 3, arquivo);
             if (feof(arquivo))
                 break;
-            printf("NOME Soma: %d  Media: %d  Quantidade: %d\n",text_resultado_read[0], text_resultado_read[1],text_resultado_read[2]);
+            printf("NOME Soma: %.2f  Media: %.2f  Quantidade: %.2f\n",text_resultado_read[2], text_resultado_read[1],text_resultado_read[0]);
             
         }
     }
