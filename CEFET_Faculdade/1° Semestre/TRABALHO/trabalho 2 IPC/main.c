@@ -1,4 +1,4 @@
-#include "ponte.h"
+#include "central.h"
 int main(){
 Caminhos *possibilidade;
  chama_mapa();//chama o mapa do arquivo junto com o tamanho 
