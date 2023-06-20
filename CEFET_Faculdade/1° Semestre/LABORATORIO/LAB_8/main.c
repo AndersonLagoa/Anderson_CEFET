@@ -26,56 +26,53 @@ int *ler_numeros(char *nome, int tam)
     return numeros;
 }
 
-void operacao(int *numeros)
+void operacao(int *numeros, char *nome, int quantidade)
 {
     // Leia os números do arquivo binário e calcule a soma, a média e a quantidade deles
-    int soma = 0, media, quantidade = sizeof(numeros) + 1;
+    float soma = 0, media;
     for (int i = 0; i < quantidade; i++)
         soma += numeros[i];
-    media = soma / quantidade;
+    media = soma / (quantidade * 1.0);
 
-    int text_resultado_write[]= {soma, media, quantidade};
-    int text_resultado_read[3];
-
-    printf("\n\n%d\t%d\n\n", soma, media);// ate aqui esta funcionando
+    float *vetor = (float *)malloc(3 * sizeof(int));
+    float *vetor2 = (float *)malloc(3 * sizeof(int));
+    vetor[0] = 0;
+    vetor[1] = 0;
+    vetor[2] = 0;
 
     FILE *arquivo = fopen("resultadoTotal.bin", "rb");
     if (arquivo == NULL)
-    {
-        fclose(arquivo);
-
+    {   
         arquivo = fopen("resultadoTotal.bin", "wb");
-        fwrite(text_resultado_write, sizeof(int), 3, arquivo);
-        fclose(arquivo);
-    }
-    else
-    {
-        fclose(arquivo);
-
-        arquivo = fopen("resultadoTotal.bin", "ab");
-        fwrite(text_resultado_write, sizeof(int), 3, arquivo);
-        fclose(arquivo);
-    }
-
-    arquivo = fopen("resultadoTotal.bin", "rb");
-    fseek(arquivo, sizeof(int), SEEK_SET);
-    if (arquivo != NULL)
-    {
-        while (1)
-        {
-            fread(text_resultado_read, sizeof(int), 3, arquivo);
-            if (feof(arquivo))
-                break;
-            printf("NOME Soma: %d  Media: %d  Quantidade: %d\n",text_resultado_read[0], text_resultado_read[1],text_resultado_read[2]);
-            
-        }
+        fwrite(vetor, sizeof(int), 3, arquivo);
     }
     fclose(arquivo);
+
+    arquivo = fopen("resultadoTotal.bin", "rb");
+
+    fread(vetor, sizeof(float), 3, arquivo);
+  
+
+    printf("ATUALMENTE:.\nSOMA: %.f\tMEDIA: %.2f\tQUANTIDADE: %d", soma, media, quantidade);
+    printf("\n\n------------------------------------\n\n");
+
+    vetor[0] += soma;
+    vetor[1] += media;
+    vetor[2] += quantidade;
+    
+    printf("ARQUIVO TOTAL:.\nSOMA: %.f\tMEDIA: %.2f\tQUANTIDADE: %.f", vetor[0], vetor[1], vetor[2]);
+    printf("\n\n------------------------------------\n\n");
+    fclose(arquivo);
+    arquivo = fopen("resultadoTotal.bin", "wb");
+    fwrite(vetor, sizeof(int), 3, arquivo);
+    fclose(arquivo);
+
 }
 int main()
 {
     int *numeros, *cpy_numeros, tam;
     char nome[15];
+    char *cpy_nome;
     printf("Informe a quantidade de numeros para ser gerados: ");
     scanf("%d", &tam);
 
@@ -85,6 +82,7 @@ int main()
     fflush(stdin);
     fgets(nome, 15, stdin);
     nome[strlen(nome) - 1] = '\0';
+    strcpy(cpy_nome, nome);
     strcat(nome, ".bin");
 
     FILE *arquivo = fopen(nome, "wb");
@@ -96,7 +94,5 @@ int main()
     fwrite(numeros, sizeof(int), tam, arquivo);
     fclose(arquivo);
 
-    cpy_numeros = ler_numeros(nome, tam);
-
-    operacao(cpy_numeros);
+    operacao(ler_numeros(nome, tam), cpy_nome, tam);
 }
