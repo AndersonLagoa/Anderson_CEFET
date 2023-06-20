@@ -26,7 +26,7 @@ int *ler_numeros(char *nome, int tam)
     return numeros;
 }
 
-void operacao(int *numeros, char *nome, int quantidade)
+void operacao(int *numeros, int quantidade)
 {
     // Leia os números do arquivo binário e calcule a soma, a média e a quantidade deles
     float soma = 0, media;
@@ -50,21 +50,23 @@ void operacao(int *numeros, char *nome, int quantidade)
 
     arquivo = fopen("resultadoTotal.bin", "rb");
 
-    fread(vetor, sizeof(float), 3, arquivo);
+    fread(vetor2, sizeof(float), 3, arquivo);
   
 
     printf("ATUALMENTE:.\nSOMA: %.f\tMEDIA: %.2f\tQUANTIDADE: %d", soma, media, quantidade);
     printf("\n\n------------------------------------\n\n");
 
-    vetor[0] += soma;
-    vetor[1] += media;
-    vetor[2] += quantidade;
+    vetor2[0] += soma;
+    vetor2[1] += media;
+    vetor2[2] += quantidade;
     
-    printf("ARQUIVO TOTAL:.\nSOMA: %.f\tMEDIA: %.2f\tQUANTIDADE: %.f", vetor[0], vetor[1], vetor[2]);
+
+
+    printf("ARQUIVO TOTAL:.\nSOMA: %.f\tMEDIA: %.2f\tQUANTIDADE: %.f", vetor2[0], vetor2[1], vetor2[2]);
     printf("\n\n------------------------------------\n\n");
     fclose(arquivo);
     arquivo = fopen("resultadoTotal.bin", "wb");
-    fwrite(vetor, sizeof(int), 3, arquivo);
+    fwrite(vetor2, sizeof(int), 3, arquivo);
     fclose(arquivo);
 
 }
@@ -72,7 +74,6 @@ int main()
 {
     int *numeros, *cpy_numeros, tam;
     char nome[15];
-    char *cpy_nome;
     printf("Informe a quantidade de numeros para ser gerados: ");
     scanf("%d", &tam);
 
@@ -82,7 +83,6 @@ int main()
     fflush(stdin);
     fgets(nome, 15, stdin);
     nome[strlen(nome) - 1] = '\0';
-    strcpy(cpy_nome, nome);
     strcat(nome, ".bin");
 
     FILE *arquivo = fopen(nome, "wb");
@@ -94,5 +94,5 @@ int main()
     fwrite(numeros, sizeof(int), tam, arquivo);
     fclose(arquivo);
 
-    operacao(ler_numeros(nome, tam), cpy_nome, tam);
+    operacao(ler_numeros(nome, tam), tam);
 }

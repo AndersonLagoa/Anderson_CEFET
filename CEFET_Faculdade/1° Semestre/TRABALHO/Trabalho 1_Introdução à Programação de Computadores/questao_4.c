@@ -56,7 +56,6 @@ int quantas_estradas_e_saidas(int **matriz, int k, int n, int **transfere) // Da
 void maior_numero_estradas(int **matriz, int n) // A qual das cidades chega o maior número de estradas?
 {
     int maior = -1, cidade = 0, compara = 0, recebe = 0;
-    ;
     int *aux;
     printf("O(s) maior(es) numero de estradas:\n");
 

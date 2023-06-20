@@ -26,8 +26,8 @@ int main()
     for (int i = 0; i < strlen(frase); i++)
         frase[i] = tolower(frase[i]);
 
-    // Tirando os espaços da frase
 
+    // Tirando os espaços da frase
     
     for (int i = 0, k = 0; i < strlen(frase); i++)
     {
@@ -38,19 +38,21 @@ int main()
         }
     }
 
-    // Bug do vsCode
+    // Bug do strrev
     string_frase[strcspn(string_frase, "'")] = '\0';
 
     // Chamando Função
     char *inversa = (char *)malloc(strlen(string_frase) * sizeof(int));
+
     strcpy(inversa, string_frase);
     strrev(inversa);
 
-    /* Outra alternativa para inverter a frase
+    // Outra alternativa para inverter a frase
     
-    int j=(strcspn(string_frase,"\0"))-1;
-        for(int i =0;i<=j;i++)
-            inversa[i]=string_frase[j-i];*/
+  // int j=(strcspn(string_frase,"\0"));
+  // for(int i=0; i<j; i++)
+  //    inversa[j-i-1] = string_frase[i];
+    
 
 
     int resultado = verificar_palindromo(string_frase, inversa, 0);
