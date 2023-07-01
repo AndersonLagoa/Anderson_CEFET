@@ -29,13 +29,13 @@ void verificar_mapa(char **mapa, int linha, int coluna, int **posicao, char ***n
     char **mapa_novo = (char **)malloc(sizeof(int *) * linha);
     for (int i = 0; i < linha; i++)
         mapa_novo[i] = (char *)malloc(sizeof(int) * coluna);
-    
+
     for (int i = 0; i < linha; i++)
         for (int j = 0; j < coluna; j++)
             mapa_novo[i][j] = mapa[i][j];
 
     int tesouro = 0;
-    int posicao_comeca[2];
+    int *posicao_comeca=(int *)malloc(sizeof(int) * 2);
 
     for (int i = 0; i < linha; i++) // limitar os espaços em volta dos canibaias
     {
@@ -59,12 +59,12 @@ void verificar_mapa(char **mapa, int linha, int coluna, int **posicao, char ***n
     {
         for (int j = 0; j < coluna; j++)
         {
-            if (mapa_novo[i][j] == '!')
+            if (mapa_novo[i][j] == '!')// quantidades de tesouros e suas localizações
                 tesouro++;
-            if (mapa_novo[i][j] == '@')
+            if (mapa_novo[i][j] == '@')//pegar a localização inicial
             {
-                posicao_comeca[0] = i +1;
-                posicao_comeca[1] = j +1;
+                posicao_comeca[0] = i + 1;
+                posicao_comeca[1] = j + 1;
             }
         }
     }
@@ -72,27 +72,73 @@ void verificar_mapa(char **mapa, int linha, int coluna, int **posicao, char ***n
     *novoMapa = mapa_novo;
     *posicao = posicao_comeca;
     *Qtesouro = tesouro;
-    
 }
 
+void trocar_mapa(char **mapa_mod, int linha, int coluna, int *posicao, int ***matriz_tr){
+   
+    int **mapa_trocado = (int **)malloc(sizeof(int *) * (linha+2));
+    for (int i = 0; i < (linha+2); i++)
+        mapa_trocado[i] = (int *)malloc(sizeof(int) * (coluna+2));
+    
+    for (int i = 0; i < (linha+2); i++) 
+        for (int j = 0; j < (coluna+2); j++)
+        {
+            if (i == 0 || j == 0 || i == (linha+1) || j == (coluna+1))//parede
+                mapa_trocado[i][j] = 0;
+            else
+            {
+                if(mapa_mod[i-1][j-1]=='#' || mapa_mod[i-1][j-1]=='*' ||mapa_mod[i-1][j-1]=='~') // trocagem no mapa
+                    mapa_trocado[i][j]=0;
+                else
+                    mapa_trocado[i][j]=1000;
+            }
+        
+        }
+    printf("funcionando \n\n");
+
+    mapa_trocado[posicao[0]][posicao[1]]=1;
+    *matriz_tr = mapa_trocado;
+
+}
 int main()
 {
     char **mapa, **mapa_mod;
     int *posicao_Inicial;
     int linha, coluna, tesouro;
     ler_mapa(&mapa, &linha, &coluna);
-    printf("--------------MAPA--------------\n\n");
+
+   /*printf("--------------MAPA--------------\n\n");
     for (int i = 0; i < linha; i++)
     {
         for (int j = 0; j < coluna; j++)
             printf("%c ", mapa[i][j]);
         printf("\n");
     }
-    printf("\n");
+    printf("\n");*/
 
-    verificar_mapa(mapa, linha, coluna, &posicao_Inicial, &mapa_mod,&tesouro);
-    printf("%d %d",posicao_Inicial[0],posicao_Inicial[1]);
+    verificar_mapa(mapa, linha, coluna, &posicao_Inicial, &mapa_mod, &tesouro);
 
-    principal(mapa,mapa_mod,posicao_Inicial,linha,coluna,tesouro);
-    
+    /*printf("--------------MAPA mod----------\n\n");
+    for (int i = 0; i < linha; i++)
+    {
+        for (int j = 0; j < coluna; j++)
+            printf("%c ", mapa_mod[i][j]);
+        printf("\n");
+    }
+    printf("\n");*/
+
+    int **mapa_trocado;
+    trocar_mapa(mapa_mod, linha, coluna, posicao_Inicial,&mapa_trocado);
+
+    /*printf("--------------MAPA trocado-------\n\n");
+    for (int i = 0; i < linha+2; i++)
+    {
+        for (int j = 0; j < coluna+2; j++)
+            printf("%i ", mapa_trocado[i][j]);
+        printf("\n");
+    }
+    printf("\n");*/
+
+
+    // principal(mapa,mapa_mod,posicao_Inicial,linha,coluna,tesouro);
 }
