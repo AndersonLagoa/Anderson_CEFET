@@ -1,13 +1,12 @@
-#include "encontra.h"
+// #include "encontra.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 int **distancia(int **matriz, int cost, int linha, int coluna)
 {
-    // printf("\nrodou uma vez\n\n");
-    for (int i = 1; i < linha - 1; i++)
-        for (int j = 1; j < coluna - 1; j++)
+    for (int i = 1; i < linha + 1; i++)
+        for (int j = 1; j < coluna + 1; j++)
         {
             if (matriz[i][j] > 0)
             {
@@ -30,16 +29,13 @@ int **distancia(int **matriz, int cost, int linha, int coluna)
         return distancia(matriz, cost - 1, linha, coluna);
 }
 
-void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int *tesouro,int ***alorDistancia_inicial) // verificar se todos os tesouros é possivel pegar e pegar as posições dos tesouros
+void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int *tesouro, int ***alorDistancia_inicial) // verificar se todos os tesouros é possivel pegar e pegar as posições dos tesouros
 {
-
-    printf("chegou em vericiar tesouro\n\n");
     int **matriz_distancia = (int **)malloc(sizeof(int *) * 30);
     for (int i = 0; i < 30; i++)
         matriz_distancia[i] = (int *)malloc(sizeof(int) * 3);
 
     int *vetor_menor = (int *)malloc(sizeof(int) * 4);
-    // int vetor_menor[4];
 
     vetor_menor[0] = 0;
     vetor_menor[1] = 0;
@@ -55,7 +51,6 @@ void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int
         {
             if (mapa_mod[i][j] == '!')
             {
-                   printf("caio:%d %d\n\n",i,j);
                 if (mapa_ver[i + 1][j] != 0 || mapa_ver[i + 1][j] != 1000) // lado esquedo
                     vetor_menor[0] = mapa_ver[i + 1][j];
 
@@ -77,7 +72,7 @@ void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int
                 {
                     menor = 1000;
                     for (int i = 0; i < 4; i++)
-                        if (vetor_menor[i] < menor && vetor_menor[i] !=0 )
+                        if (vetor_menor[i] < menor && vetor_menor[i] != 0)
                             menor = vetor_menor[i];
 
                     matriz_distancia[tesouroPosivel][0] = i;
@@ -96,34 +91,113 @@ void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int
     }
 
     *tesouro = tesouroPosivel;
-    printf("saiu em vericiar tesouro\n\n");
-    *alorDistancia_inicial= matriz_distancia;
+    *alorDistancia_inicial = matriz_distancia;
 }
 
-/*void principal_concontra(char **mapa, char **mapa_mod, int **mapa_trocado, int *posicao_Inicial, int linha, int coluna, int tesouro)
+int *calcular_distancia(int **mapa_trocado, int *posicao_inicial, int *posicao_tesouro, int linha, int coluna, int cost)
 {
-    int **valorDistancia_inicial;
 
-
-    int **matriz_ver = (int **)mallloc(sizeof(int) * (linha + 2));
+    int **matriz_aux = (int **)malloc(sizeof(int *) * (linha + 2));
     for (int i = 0; i < (linha + 2); i++)
-        matriz_ver[i] = (int *)malloc(sizeof(int) * (coluna + 2));
+        matriz_aux[i] = (int *)malloc(sizeof(int) * (coluna + 2));
 
-    matriz_ver = distancia(mapa_trocado, tesouro, linha, coluna);
+    int *vetor_distancia = (int *)malloc(sizeof(int) * 5);
+    int *vetor_menor = (int *)malloc(sizeof(int) * 4);
 
-    valorDistancia_inicial = vericar_tesouro(mapa_mod, mapa_trocado, matriz_ver, linha, coluna, &tesouro);
+    mapa_trocado[posicao_inicial[0] + 1][posicao_inicial[1] + 1] = 1;
 
+    matriz_aux = distancia(mapa_trocado, cost, linha, coluna);
+
+    for (int i = 0; i < (linha + 2); i++)
+        for (int j = 0; j < (coluna + 2); j++)
+        {
+            if ((posicao_tesouro[0] + 1) == i && (posicao_tesouro[1] + 1) == j)
+            {
+                if (matriz_aux[i][j - 1] != 0 || matriz_aux[i][j - 1] != 1000) // lado esquedo
+                    vetor_menor[0] = matriz_aux[i][j - 1];
+
+                if (matriz_aux[i][j + 1] != 0 || matriz_aux[i][j + 1] != 1000) // lado direito
+                    vetor_menor[1] = matriz_aux[i][j + 1];
+
+                if (matriz_aux[i - 1][j] != 0 || matriz_aux[i - 1][j] != 1000) // para cima
+                    vetor_menor[2] = matriz_aux[i - 1][j];
+
+                if (matriz_aux[i + 1][j] != 0 || matriz_aux[i + 1][j] != 1000) // para baixo
+                    vetor_menor[3] = matriz_aux[i + 1][j];
+
+                int menor = 1000;
+                for (int i = 0; i < 4; i++)
+                    if (vetor_menor[i] < menor && vetor_menor[i] != 0)
+                        menor = vetor_menor[i];
+
+                vetor_distancia[0] = posicao_inicial[0];
+                vetor_distancia[1] = posicao_inicial[1];
+                vetor_distancia[2] = i - 1;
+                vetor_distancia[3] = j - 1;
+                vetor_distancia[4] = menor;
+            }
+        }
+
+    return vetor_distancia;
+}
+
+void melhor_caminho(int **matrizValores, int **posicaoInicial, int linha, int coluna, int tesouro)
+{
+    int **tabelaGrafo = (int **)malloc(sizeof(int *) * tesouro);
+    for (int i = 0; i < tesouro; i++)
+        tabelaGrafo[i] = (int *)malloc(sizeof(int) * tesouro);
+
+    int ajustador = 0;
     for (int i = 0; i < tesouro; i++)
     {
-        for (int j = 0; j < 3; j++)
+        ;
+        for (int j = 0; j < tesouro; j++)
         {
-            printf("%d ",valorDistancia_inicial[i][j]);
+            if (i == j)
+            {
+                tabelaGrafo[i][j] = 0;
+                int y = j + 1;
+                for (; y < tesouro; y++)
+                {
+                    tabelaGrafo[i][y] = matrizValores[ajustador][4];
+                    ajustador++;
+                }
+            }
         }
+    }
+
+    for (int i = 0; i < tesouro; i++)
+        for (int j = 0; j < tesouro; j++)
+            tabelaGrafo[j][i] = tabelaGrafo[i][j];
+
+
+    printf("\n\ntabela do grafo\n");
+    for (int i = 0; i < tesouro; i++)
+    {
+        for (int j = 0; j < tesouro; j++)
+            printf("%d  ", tabelaGrafo[i][j]);
         printf("\n");
     }
 }
-*/
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 void ler_mapa(char ***mapa, int *linha, int *coluna)
 {
     int linha_mapa, coluna_mapa;
@@ -222,6 +296,7 @@ void trocar_mapa(char **mapa_mod, int linha, int coluna, int *posicao, int ***ma
     mapa_trocado[posicao[0]][posicao[1]] = 1;
     *matriz_tr = mapa_trocado;
 }
+
 int main()
 {
     char **mapa, **mapa_mod;
@@ -229,39 +304,14 @@ int main()
     int linha, coluna, tesouro;
     ler_mapa(&mapa, &linha, &coluna);
 
-    printf("--------------MAPA--------------\n\n");
-    for (int i = 0; i < linha; i++)
-    {
-        for (int j = 0; j < coluna; j++)
-            printf("%c ", mapa[i][j]);
-        printf("\n");
-    }
-    printf("\n");
-
     verificar_mapa(mapa, linha, coluna, &posicao_Inicial, &mapa_mod, &tesouro);
-
-    printf("--------------MAPA mod----------\n\n");
-    for (int i = 0; i < linha; i++)
-    {
-        for (int j = 0; j < coluna; j++)
-            printf("%c ", mapa_mod[i][j]);
-        printf("\n");
-    }
-    printf("\n");
 
     int **mapa_trocado;
     trocar_mapa(mapa_mod, linha, coluna, posicao_Inicial, &mapa_trocado);
 
-    printf("--------------MAPA trocado-------\n\n");
-    for (int i = 0; i < linha + 2; i++)
-    {
-        for (int j = 0; j < coluna + 2; j++)
-            printf("%i ", mapa_trocado[i][j]);
-        printf("\n");
-    }
-    printf("\n");
+    int **matriz_MapaTrocado;
+    trocar_mapa(mapa_mod, linha, coluna, posicao_Inicial, &matriz_MapaTrocado);
 
-    // principal_concontra(mapa,mapa_mod,mapa_trocado,posicao_Inicial,linha,coluna,tesouro);
     int cost = 0;
     for (int i = 0; i < (linha + 2); i++)
         for (int j = 0; j < (coluna + 2); j++)
@@ -269,7 +319,7 @@ int main()
             {
                 cost++;
             }
-    printf("%d\n\n", cost);
+
     int **valorDistancia_inicial;
 
     int **matriz_ver = (int **)malloc(sizeof(int *) * (linha + 2));
@@ -277,24 +327,35 @@ int main()
         matriz_ver[i] = (int *)malloc(sizeof(int) * (coluna + 2));
 
     matriz_ver = distancia(mapa_trocado, cost, linha, coluna);
-    for (int i = 0; i < linha + 2; i++)
-    {
-        for (int j = 0; j < coluna + 2; j++)
+
+    vericar_tesouro(mapa_mod, matriz_ver, linha, coluna, &tesouro, &valorDistancia_inicial);
+
+
+    int **matriz_valoresEntreTesouros = (int **)malloc(sizeof(int *) * ((tesouro * (tesouro - 1)) / 2));
+    for (int i = 0; i < ((tesouro * (tesouro - 1)) / 2); i++)
+        matriz_valoresEntreTesouros[i] = (int *)malloc(sizeof(int) * 5);
+
+    int *vetor_inicial = (int *)malloc(sizeof(int) * 2);
+    int *vetor_final = (int *)malloc(sizeof(int) * 2);
+
+    int *mm = (int *)malloc(sizeof(int) * 5);
+    int x = 0;
+    matriz_MapaTrocado[posicao_Inicial[0]][posicao_Inicial[1]] = 1000;
+    for (int i = tesouro - 1, l = 0; 0 < i; i--, l++)
+        for (int j = i, k = l; 0 < j; j--, k++)
         {
-            printf("%d ", matriz_ver[i][j]);
+            vetor_inicial[0] = valorDistancia_inicial[l][0];
+            vetor_inicial[1] = valorDistancia_inicial[l][1];
+
+            vetor_final[0] = valorDistancia_inicial[k + 1][0];
+            vetor_final[1] = valorDistancia_inicial[k + 1][1];
+
+            mm = calcular_distancia(matriz_MapaTrocado, vetor_inicial, vetor_final, linha, coluna, cost);
+            for (int p = 0; p < 5; p++)
+                matriz_valoresEntreTesouros[x][p] = mm[p];
+
+            x++;
         }
-        printf("\n");
-    }
 
-    printf("\n\n");
-    vericar_tesouro(mapa_mod, matriz_ver, linha, coluna, &tesouro,&valorDistancia_inicial);
-
-    for (int i = 0; i < tesouro; i++)
-     {
-        for (int j = 0; j < 3; j++)
-         {
-             printf("%d ",valorDistancia_inicial[i][j]);
-         }
-
-     }   
+    melhor_caminho(matriz_valoresEntreTesouros, valorDistancia_inicial, linha, coluna, tesouro);
 }
