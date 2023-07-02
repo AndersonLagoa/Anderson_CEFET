@@ -4,6 +4,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-void principal(char **mapa,char **mapa_mod,int *posicao_Inicial, int linha, int coluna, int tesouro);
 
+void principal_concontra(char **mapa, char **mapa_mod, int **mapa_trocado, int *posicao_Inicial, int linha, int coluna, int tesouro);
 #endif
