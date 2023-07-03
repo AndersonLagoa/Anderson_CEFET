@@ -74,11 +74,13 @@ void vericar_tesouro(char **mapa_mod, int **mapa_ver, int linha, int coluna, int
                     for (int i = 0; i < 4; i++)
                         if (vetor_menor[i] < menor && vetor_menor[i] != 0)
                             menor = vetor_menor[i];
-
-                    matriz_distancia[tesouroPosivel][0] = i;
-                    matriz_distancia[tesouroPosivel][1] = j;
-                    matriz_distancia[tesouroPosivel][2] = menor;
-                    tesouroPosivel++;
+                    if (menor != 1000)
+                    {
+                        matriz_distancia[tesouroPosivel][0] = i;
+                        matriz_distancia[tesouroPosivel][1] = j;
+                        matriz_distancia[tesouroPosivel][2] = menor;
+                        tesouroPosivel++;
+                    }
                 }
             }
         }
@@ -141,43 +143,134 @@ int *calcular_distancia(int **mapa_trocado, int *posicao_inicial, int *posicao_t
     return vetor_distancia;
 }
 
-void melhor_caminho(int **matrizValores, int **posicaoInicial, int linha, int coluna, int tesouro)
+int caminho(int **tabela, int linha, int tesouro, int contador, int somatoria)
 {
-    int **tabelaGrafo = (int **)malloc(sizeof(int *) * tesouro);
+
+    int **tabelaGrafo=(int **)malloc(sizeof(int *)*tesouro+1);
+    for (int i = 0; i < tesouro+1; i++)
+        tabelaGrafo[i]=(int *)malloc(sizeof(int )*tesouro+1);
+    
+    for (int i = 0; i < tesouro+1; i++){
+        for (int j = 0; j < tesouro+1; j++){
+            tabelaGrafo[i][j] = tabela[i][j];    
+        }
+    }
+    
+
+    int menor;
+    int select;
+    for (int i = 1; i < tesouro + 1; i++)
+    {
+        // for (int j = 1; j < tesouro + 1; j++){
+        if (i == linha)
+        {
+            menor = 10000000000;
+            for (int k = 1; k < tesouro + 1; k++)
+            {
+                if (tabelaGrafo[linha][k] != 0)
+                {
+                    if (menor > tabelaGrafo[i][k])
+                    {
+                        menor = tabelaGrafo[i][k];
+                        select = k;                    }
+                }
+            }
+            somatoria = somatoria + menor;
+            for (int l = 1; l < tesouro + 1; l++)
+            {
+                tabelaGrafo[l][linha] = 0;
+            }
+        }
+        //}
+    }
+
+    if (contador == 1)
+    {
+        somatoria += tabelaGrafo[0][select];
+        return somatoria;
+    }
+    else
+        return caminho(tabelaGrafo, select, tesouro, contador - 1, somatoria);
+}
+
+void melhor_caminho(int **matrizValores, int **posicaoInicial, int tesouro)
+{
+    int **tabelaGrafo = (int **)malloc(sizeof(int *) * (tesouro + 1));
+    for (int i = 0; i < (tesouro + 1); i++)
+        tabelaGrafo[i] = (int *)malloc(sizeof(int) * (tesouro + 1));
+
+    int **selectLinha = (int **)malloc(sizeof(int *) * tesouro);
     for (int i = 0; i < tesouro; i++)
-        tabelaGrafo[i] = (int *)malloc(sizeof(int) * tesouro);
+        selectLinha[i] = (int *)malloc(sizeof(int) * 2);
 
     int ajustador = 0;
-    for (int i = 0; i < tesouro; i++)
+    for (int i = 0; i < (tesouro + 1); i++)
     {
-        ;
-        for (int j = 0; j < tesouro; j++)
+
+        for (int j = 0; j < (tesouro + 1); j++)
         {
             if (i == j)
             {
                 tabelaGrafo[i][j] = 0;
                 int y = j + 1;
-                for (; y < tesouro; y++)
+
+                if (i == 0 && j == 0)
+                {
+                    for (int x = 0; y < tesouro + 1; y++, x++)
+                    {
+                        tabelaGrafo[i][y] = posicaoInicial[x][2];
+                        selectLinha[i][0] = posicaoInicial[x][0];
+                        selectLinha[i][1] = posicaoInicial[x][1];
+                    }
+                    break;
+                }
+                for (; y < (tesouro + 1); y++)
                 {
                     tabelaGrafo[i][y] = matrizValores[ajustador][4];
+
                     ajustador++;
                 }
             }
         }
     }
 
-    for (int i = 0; i < tesouro; i++)
-        for (int j = 0; j < tesouro; j++)
+    for (int i = 0; i < tesouro + 1; i++)
+        for (int j = 0; j < tesouro + 1; j++)
             tabelaGrafo[j][i] = tabelaGrafo[i][j];
 
-
-    printf("\n\ntabela do grafo\n");
     for (int i = 0; i < tesouro; i++)
     {
-        for (int j = 0; j < tesouro; j++)
+        printf("\n%d-%d  %d\n", posicaoInicial[i][0], posicaoInicial[i][1], posicaoInicial[i][2]);
+        selectLinha[i][0] = posicaoInicial[i][0];
+        selectLinha[i][1] = posicaoInicial[i][1];
+    }
+
+    printf("\n\ntabela do grafo\n");
+    for (int i = 0; i < tesouro + 1; i++)
+    {
+        for (int j = 0; j < tesouro + 1; j++)
             printf("%d  ", tabelaGrafo[i][j]);
         printf("\n");
     }
+printf("\n\n");
+    int *menorCaminhoCom = (int *)malloc(sizeof(int) * tesouro);
+
+    for (int i = 1, j =0; i < tesouro + 1; i++,j++)
+    {
+        int soma = tabelaGrafo[0][i];
+
+        int colar = caminho(tabelaGrafo, i, tesouro, tesouro - 1, soma);
+
+        menorCaminhoCom[j] = colar;
+        printf("%d - %d\n", i, menorCaminhoCom[j]);
+    }
+   int menor = 100000000;
+   for(int i = 0; i<tesouro;i++){
+    if(menor>menorCaminhoCom[i])
+        menor =menorCaminhoCom[i];
+
+   }
+ printf("\n\nMenor Caminho encontrado: %d\n\n\\",menor);
 }
 
 //
@@ -213,9 +306,17 @@ void ler_mapa(char ***mapa, int *linha, int *coluna)
     for (int i = 0; i < linha_mapa; i++)
         le_mapa[i] = (char *)malloc(sizeof(int) * coluna_mapa);
 
+    int comp = 0;
     for (int i = 0; !feof(arquivo); i++) // ler o mapa
+    {
         fscanf(arquivo, "%s", le_mapa[i]);
-
+        comp++;
+    }
+    if (comp == 0)
+    {
+        printf("\nO MAPA ESTA VAZIO\n\n");
+        exit(0);
+    }
     fclose(arquivo);
     *mapa = le_mapa;
     *linha = linha_mapa;
@@ -266,6 +367,11 @@ void verificar_mapa(char **mapa, int linha, int coluna, int **posicao, char ***n
             }
         }
     }
+    if (tesouro == 0)
+    {
+        printf("\nO MAPA NAO POSSUE TESOURO\n\n");
+        exit(0);
+    }
 
     *novoMapa = mapa_novo;
     *posicao = posicao_comeca;
@@ -303,6 +409,11 @@ int main()
     int *posicao_Inicial;
     int linha, coluna, tesouro;
     ler_mapa(&mapa, &linha, &coluna);
+    if (linha == 0 || coluna == 0)
+    {
+        printf("\nCampo vazio!!\n\n");
+        exit(0);
+    }
 
     verificar_mapa(mapa, linha, coluna, &posicao_Inicial, &mapa_mod, &tesouro);
 
@@ -329,7 +440,17 @@ int main()
     matriz_ver = distancia(mapa_trocado, cost, linha, coluna);
 
     vericar_tesouro(mapa_mod, matriz_ver, linha, coluna, &tesouro, &valorDistancia_inicial);
+    if (tesouro == 0)
+    {
+        printf("\nNao e possivel pegar os tesouros!\n");
+        exit(0);
+    }
+    else if (tesouro == 1)
+    {
 
+        printf("\nA MENOR DISTANCIA: %d\n", valorDistancia_inicial[0][2] * 2);
+        exit(0);
+    }
 
     int **matriz_valoresEntreTesouros = (int **)malloc(sizeof(int *) * ((tesouro * (tesouro - 1)) / 2));
     for (int i = 0; i < ((tesouro * (tesouro - 1)) / 2); i++)
@@ -357,5 +478,5 @@ int main()
             x++;
         }
 
-    melhor_caminho(matriz_valoresEntreTesouros, valorDistancia_inicial, linha, coluna, tesouro);
+    melhor_caminho(matriz_valoresEntreTesouros, valorDistancia_inicial, tesouro);
 }
