@@ -164,7 +164,7 @@ int caminho(int **tabela, int linha, int tesouro, int contador, int somatoria)
         // for (int j = 1; j < tesouro + 1; j++){
         if (i == linha)
         {
-            menor = 10000000000;
+            menor = 10000000;
             for (int k = 1; k < tesouro + 1; k++)
             {
                 if (tabelaGrafo[linha][k] != 0)
