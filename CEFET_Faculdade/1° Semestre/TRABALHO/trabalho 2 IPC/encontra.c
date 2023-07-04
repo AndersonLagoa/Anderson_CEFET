@@ -192,23 +192,9 @@ void melhor_caminho(int **matrizValores, int **posicaoInicial, int linha, int co
 }
 
 //
+//------------------------------------------------------------------------------
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
 void ler_mapa(char ***mapa, int *linha, int *coluna)
 {
     int linha_mapa, coluna_mapa;
