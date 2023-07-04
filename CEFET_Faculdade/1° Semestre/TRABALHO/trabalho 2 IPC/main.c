@@ -1,4 +1,4 @@
-// #include "encontra.h"
+//#include "encontra.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -240,19 +240,20 @@ void melhor_caminho(int **matrizValores, int **posicaoInicial, int tesouro)
 
     for (int i = 0; i < tesouro; i++)
     {
-        printf("\n%d-%d  %d\n", posicaoInicial[i][0], posicaoInicial[i][1], posicaoInicial[i][2]);
+        //printf("\n%d-%d  %d\n", posicaoInicial[i][0], posicaoInicial[i][1], posicaoInicial[i][2]);
         selectLinha[i][0] = posicaoInicial[i][0];
         selectLinha[i][1] = posicaoInicial[i][1];
     }
 
-    printf("\n\ntabela do grafo\n");
+  /*  printf("\n\ntabela do grafo\n");
     for (int i = 0; i < tesouro + 1; i++)
     {
         for (int j = 0; j < tesouro + 1; j++)
             printf("%d  ", tabelaGrafo[i][j]);
         printf("\n");
     }
-printf("\n\n");
+printf("\n\n");*/
+
     int *menorCaminhoCom = (int *)malloc(sizeof(int) * tesouro);
 
     for (int i = 1, j =0; i < tesouro + 1; i++,j++)
@@ -262,7 +263,7 @@ printf("\n\n");
         int colar = caminho(tabelaGrafo, i, tesouro, tesouro - 1, soma);
 
         menorCaminhoCom[j] = colar;
-        printf("%d - %d\n", i, menorCaminhoCom[j]);
+       // printf("%d - %d\n", i, menorCaminhoCom[j]);
     }
    int menor = 100000000;
    for(int i = 0; i<tesouro;i++){
@@ -270,7 +271,7 @@ printf("\n\n");
         menor =menorCaminhoCom[i];
 
    }
- printf("\n\nMenor Caminho encontrado: %d\n\n\\",menor);
+ printf("\n\nMenor Caminho encontrado: %d\n\n",menor);
 }
 
 //
@@ -477,6 +478,6 @@ int main()
 
             x++;
         }
-
+    
     melhor_caminho(matriz_valoresEntreTesouros, valorDistancia_inicial, tesouro);
 }
